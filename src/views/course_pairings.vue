@@ -24,6 +24,7 @@
     <div>
         <v-container>
             <v-layout align-center justify-center row fill-height>
+                <CSVUpload></CSVUpload>
                 <v-flex xs12 sm5 md3>
                     <v-btn color="blue-grey" class="white--text">Import Data</v-btn>
                 </v-flex>
@@ -97,6 +98,7 @@
 import HotTable from "@handsontable/vue";
 import Handsontable from "handsontable";
 import generate_query_string from "./components/generate_query_string";
+import CSVUpload from './components/course_pairings_components/csv_upload.vue';
 export default {
     data: function() {
         return {
@@ -358,7 +360,8 @@ export default {
         }
     },
     components: {
-        HotTable
+        HotTable,
+        CSVUpload
     }
 };
 </script>
