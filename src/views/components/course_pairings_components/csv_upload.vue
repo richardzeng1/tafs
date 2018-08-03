@@ -12,7 +12,7 @@
                 type="file"
                 style="display: none"
                 ref="image"
-                accept="*"
+                accept=".csv"
                 @change="onFilePicked">
         </v-flex>
 	</v-container>
@@ -34,6 +34,7 @@ export default {
     methods:{
         onFilePicked:function(e){
             const files = e.target.files
+            console.log(files);
 			if(files[0] !== undefined) {
 				this.imageName = files[0].name
 				if(this.imageName.lastIndexOf('.') <= 0) {
@@ -50,10 +51,59 @@ export default {
 				this.imageFile = ''
 				this.imageUrl = ''
 			}
+            //parseFile(files[0]);
+            var reader = new FileReader();
+            reader.readAsText(files[0]);
+            reader.onerror = this.errorHandler;
+            reader.onload = this.loadHandler;
+
         },
-        pickFile () {
+        pickFile:function() {
             this.$refs.image.click ()
         },
+        loadHandler:function(event){
+            var csv = event.target.result;
+            csv = this.processData(csv);
+            this.createAssociation(csv);
+        },
+        errorHandler:function(event){
+            this.$emit("error", event.target.error.name);
+        },
+        processData:function(csv){
+            var allTextLines = csv.split(/\r\n|\n/);
+            var lines = [];
+            for (var i=0; i<allTextLines.length; i++) {
+                var data = allTextLines[i].split(',');
+                    var tarr = [];
+                    for (var j=0; j<data.length; j++) {
+                        tarr.push(data[j]);
+                    }
+                    lines.push(tarr);
+            }
+            return lines;
+        },
+        createAssociation:function(csv){
+            for (let row of csv){
+                let course_code = row[0];
+                for (let index=1; index<row.length; index++){
+                    let cell=JSON.parse(row[index]);
+
+                    let body = JSON.stringify({
+                        association_list: [
+                            {
+                                course: {
+                                    course_code: course_code
+                                },
+                                section: {
+                                    section_id: section_id
+                                },
+                                user_id: user_id
+                            }
+                        ]
+                    });
+                }
+            }
+        }
     }
 
 };
